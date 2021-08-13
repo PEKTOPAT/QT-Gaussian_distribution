@@ -14,18 +14,32 @@ MainWindow::~MainWindow()
 }
 
 
-float  MainWindow::myGenerateGauss(int size_distribution)
+QVector <QVector<qint32> > MainWindow::myGenerateGauss(int MSG_len, double DataSize_MByte)
 {
+    int number_distribut = DataSize_MByte * (qPow(10, 6))/(sizeof(qint32));
+    int number_vector = (number_distribut / MSG_len) + 1;
     timeFORrand = QTime::currentTime();
     qsrand((uint)timeFORrand.msec());
-    randomNumber_1 = qrand()% int (qPow(10, NUMBER_SIGN_RAND) + 1)/qPow(10, NUMBER_SIGN_RAND) - 0.5;
-    randomNumber_2 = qrand()% int (qPow(10, NUMBER_SIGN_RAND) + 1)/qPow(10, NUMBER_SIGN_RAND) - 0.5;
-    qDebug() << "time2" << randomNumber;
-
-
-//    float sum = 0;
-//    for (int i = 0; i < size_distribution; ++i)
-//        sum += (float) qrand() / RAND_MAX;
-//    qDebug() << "Number = " << sum / size_distribution;
-//    return sum / size_distribution;
+    while(myQVectorGauss.size() != number_vector)
+    {
+        while(arrayGauss.size() != MSG_len)
+        {
+            randomNumber_x = 2* (qrand()% int (qPow(10, NUMBER_SIGN_RAND) + 1)/qPow(10, NUMBER_SIGN_RAND)) - 1;
+            randomNumber_y = 2* (qrand()% int (qPow(10, NUMBER_SIGN_RAND) + 1)/qPow(10, NUMBER_SIGN_RAND)) - 1;
+            //qDebug() << randomNumber_x << randomNumber_y;
+            float s =  qPow(randomNumber_x, 2) + qPow(randomNumber_y, 2);
+            if (s > 0 && s <= 1)
+            {
+                numberGauss_z0 = randomNumber_x * sqrt(-2*log(s)/s);
+                numberGauss_z1 = randomNumber_y * sqrt(-2*log(s)/s);
+                //qDebug() << numberGauss_z0 << numberGauss_z1;
+                arrayGauss.append(numberGauss_z0 * qPow(10, 3));
+                arrayGauss.append(numberGauss_z1 * qPow(10, 3));
+                qint32 a = arrayGauss[0];
+            }
+        }
+        myQVectorGauss.append(arrayGauss);
+        arrayGauss.clear();
+    }
+    return myQVectorGauss;
 }
